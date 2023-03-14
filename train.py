@@ -206,9 +206,9 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
             if global_step % hps.train.log_interval == 0:
                 lr = optim_g.param_groups[0]['lr']
                 losses = [loss_disc, loss_gen, loss_fm, loss_mel, loss_kl]
-                logger.info('Train Epoch: {} [{:.0f}%]'.format(
+                logger.info('Train Epoch: {} [{:.0f}%] {}'.format(
                     epoch,
-                    100. * batch_idx / len(train_loader)))
+                    100. * batch_idx / len(train_loader),global_step))
                 logger.info(f"Losses: {[x.item() for x in losses]}, step: {global_step}, lr: {lr}")
 
                 scalar_dict = {"loss/g/total": loss_gen_all, "loss/d/total": loss_disc_all, "learning_rate": lr,
@@ -238,6 +238,7 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
 
             if global_step % hps.train.eval_interval == 0:
                 evaluate(hps, net_g, eval_loader, writer_eval)
+                logger.info('global_step % hps.train.eval_interval={}'.format(global_step % hps.train.eval_interval))
                 utils.save_checkpoint(net_g, optim_g, hps.train.learning_rate, epoch,
                                       os.path.join(hps.model_dir, "G_{}.pth".format(global_step)))
                 utils.save_checkpoint(net_d, optim_d, hps.train.learning_rate, epoch,

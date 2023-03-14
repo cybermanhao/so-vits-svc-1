@@ -206,9 +206,9 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
             if global_step % hps.train.log_interval == 0:
                 lr = optim_g.param_groups[0]['lr']
                 losses = [loss_disc, loss_gen, loss_fm, loss_mel, loss_kl]
-                logger.info('Train Epoch: {} [{:.0f}%] {}'.format(
+                logger.info('Train Epoch: {} [{:.0f}%] '.format(
                     epoch,
-                    100. * batch_idx / len(train_loader),global_step))
+                    100. * batch_idx / len(train_loader)))
                 logger.info(f"Losses: {[x.item() for x in losses]}, step: {global_step}, lr: {lr}")
 
                 scalar_dict = {"loss/g/total": loss_gen_all, "loss/d/total": loss_disc_all, "learning_rate": lr,
@@ -254,6 +254,7 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
         now = time.time()
         durtaion = format(now - start_time, '.2f')
         logger.info(f'====> Epoch: {epoch}, cost {durtaion} s')
+        logger.info('global_steup{global_step}')
         start_time = now
 
 

@@ -203,6 +203,7 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
         scaler.update()
 
         if rank == 0:
+            logger.info(f'gocha! Global_steup{global_step},eval{hps.train.eval_interval}')
             if global_step % hps.train.log_interval == 0:
                 lr = optim_g.param_groups[0]['lr']
                 losses = [loss_disc, loss_gen, loss_fm, loss_mel, loss_kl]
@@ -247,14 +248,13 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, schedulers, scaler, loade
                 if keep_ckpts > 0:
                     utils.clean_checkpoints(path_to_models=hps.model_dir, n_ckpts_to_keep=keep_ckpts, sort_by_time=True)
 
-    global_step += 1
+        global_step += 1
 
     if rank == 0:
         global start_time
         now = time.time()
         durtaion = format(now - start_time, '.2f')
-        logger.info(f'====> Epoch: {epoch}, cost {durtaion} s')
-        logger.info('global_steup{}'.format(global_step))
+        logger.info(f'====> Epoch: {epoch}, cost {durtaion} s,Global_steup{global_step},eval{hps.train.eval_interval}')
         start_time = now
 
 
